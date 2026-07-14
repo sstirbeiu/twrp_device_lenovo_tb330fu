@@ -1,6 +1,9 @@
-/system                   ext4     system                               flags=display=system;logical;slotselect
-/vendor                   ext4     vendor                               flags=display=vendor;logical;slotselect
-/product                  ext4     product                              flags=display=product;logical;slotselect
+/system                   erofs    system                               flags=display=system;logical;slotselect
+/vendor                   erofs    vendor                               flags=display=vendor;logical;slotselect
+/product                  erofs    product                              flags=display=product;logical;slotselect
+/system_dlkm              erofs    system_dlkm                          flags=display=system_dlkm;logical;slotselect
+/vendor_dlkm              erofs    vendor_dlkm                          flags=display=vendor_dlkm;logical;slotselect
+/odm_dlkm                 erofs    odm_dlkm                             flags=display=odm_dlkm;logical;slotselect
 /metadata                 ext4     /dev/block/by-name/md_udc            flags=display=metadata
 /data                     f2fs     /dev/block/by-name/userdata          flags=display=data
 /mnt/vendor/protect_f     ext4     /dev/block/by-name/protect1          flags=display=protect_f
@@ -42,3 +45,4 @@ auto                      vfat     /devices/platform/mt_usb*            flags=di
 /dtbo                     emmc     /dev/block/by-name/dtbo              flags=display=dtbo
 /otp                      emmc     /dev/block/by-name/otp               flags=display=otp
 /vbmeta                   emmc     /dev/block/by-name/vbmeta            flags=display=vbmeta
+/init_boot                emmc     /dev/block/by-name/init_boot         flags=display=init_boot
