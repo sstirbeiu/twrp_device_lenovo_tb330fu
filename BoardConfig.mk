@@ -114,6 +114,7 @@ TW_SCREEN_BLANK_ON_BOOT := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
 TW_USE_TOOLBOX := true
 TW_INCLUDE_REPACKTOOLS := true
+TW_EXCLUDE_DEFAULT_USB_INIT := true
 
 # GKI / vendor_boot specific flags
 BOARD_USES_GENERIC_KERNEL_IMAGE := true

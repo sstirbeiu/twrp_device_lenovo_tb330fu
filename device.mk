@@ -27,4 +27,13 @@ PRODUCT_PACKAGES += \
     cppreopts.sh \
     update_engine \
     update_verifier \
-    update_engine_sideload
+    update_engine_sideload \
+    adbd \
+    minadbd
+
+# USB ConfigFS properties
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    persist.sys.usb.config=mtp,adb \
+    ro.recovery.usb.vid=18D1 \
+    ro.recovery.usb.adb.pid=D001 \
+    ro.recovery.usb.fastboot.pid=4EE0
