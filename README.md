@@ -107,6 +107,43 @@ Because the Lenovo Tab M11 is a Generic Kernel Image (GKI) device, the recovery 
    fastboot reboot
    ```
 
+
+---
+
+## ⚠️ Flashing GSIs & fastbootd Issue (Important)
+
+On dynamic partition devices, you must flash GSI system images using **`fastbootd`** (userspace fastboot). However, because TWRP replaces the stock recovery inside the `vendor_boot` partition, rebooting into fastbootd from TWRP will currently boot back into the TWRP interface instead of the fastbootd flashing interface (due to missing ConfigFS USB mappings).
+
+If you plan to flash new GSIs or want to switch ROMs, you can temporarily flash your stock-patched `vendor_boot` images back to access `fastbootd`:
+
+1. **Reboot to standard bootloader (fastboot) mode** and flash your working stock-patched `vendor_boot` images (without TWRP):
+   ```bash
+   fastboot flash vendor_boot_a patched_vendor_boot_a.bin
+   fastboot flash vendor_boot_b patched_vendor_boot_b.bin
+   ```
+2. **Reboot into fastbootd** (now successfully handled by the stock recovery ramdisk):
+   ```bash
+   fastboot reboot fastboot
+   ```
+3. **Flash your GSI** to the system partition and wipe userdata:
+   ```bash
+   fastboot flash system <gsi_image>.img
+   fastboot -w
+   ```
+4. **Re-flash the TWRP dual-slot images** (if you want TWRP back):
+   ```bash
+   fastboot flash vendor_boot_a twrp_tb330fu_dual_a.img
+   fastboot flash vendor_boot_b twrp_tb330fu_dual_b.img
+   ```
+5. **Reboot** to boot into your new GSI:
+   ```bash
+   fastboot reboot
+   ```
+
+> [!NOTE]
+> If your tablet gets stuck in a bootloop booting straight to TWRP after running reboot commands, you can clear the stuck boot flag by opening **TWRP > Advanced > Terminal** and running:
+> `dd if=/dev/zero of=/dev/block/by-name/misc count=1 bs=32`
+
 ---
 
 ## 🤝 Acknowledgements & Thanks
