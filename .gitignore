@@ -1,0 +1,8 @@
+.DS_Store
+*~
+*.swp
+*.bak
+github
+github.pub
+temp_*
+twrp_final_repacked.img
