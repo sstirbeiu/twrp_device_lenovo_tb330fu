@@ -4,12 +4,31 @@ This repository contains the Android device tree configuration required to compi
 
 ---
 
-## 🤖 AI-Assisted Development
-This device tree and its associated recovery fixes were developed in a pair-programming collaboration between the repository owner and **Antigravity**, Google DeepMind's agentic AI coding assistant. 
+## ⚠️ Disclaimer
+
+```text
+/*
+ * Your warranty is now void.
+ *
+ * I am not responsible for bricked devices, dead SD cards,
+ * thermonuclear war, or you getting fired because the alarm app failed. Please
+ * do some research if you have any concerns about features included in this ROM/Recovery
+ * before flashing it! You are choosing to make these modifications, and if
+ * you point the finger at me for messing up your device, I will laugh at you.
+ */
+```
 
 ---
 
-## 🚀 Status (TL;DR)
+## 🤖 AI-Assisted Development
+
+This device tree, dynamic touch screen firmware injection, ConfigFS USB/ADB resolution, and slot-specific dual-ramdisk repack mechanisms were developed in a pair-programming collaboration between the repository owner and:
+- **Antigravity** (Google DeepMind's agentic AI coding assistant, using the **Gemini 3.5 Flash** model)
+- **Claude 4.6 (thinking)** (used during critical stage ramoops crash log parsing and dual-slot debugging)
+
+---
+
+## 🚀 Status
 
 | Feature | Status | Notes |
 | :--- | :--- | :--- |
@@ -18,13 +37,29 @@ This device tree and its associated recovery fixes were developed in a pair-prog
 | **Dynamic Partitions** | **Works** | Mapping `/system`, `/vendor`, and `/product` logical partitions from the `super` device mapper is fully functional. |
 | **ADB / minadbd** | **Works** | Native dynamic ADB compiled-in; ConfigFS USB controllers resolved. |
 | **Decryption / Data** | **WIP** | Undergoing filesystem validation. |
-| **Normal Boot (Android)**| **Standalone Mode** | Flashing this TWRP image causes normal Android (LineageOS GSI) to bootloop. Because the MediaTek bootloader and kernel decompress the recovery ramdisk during normal boot, it creates init and file structure conflicts. To use both, you must flash the stock/patched `vendor_boot` to boot Android, and this repacked TWRP image to boot TWRP. |
+| **Normal Boot (Android)**| **Works** | Using the dual-slot repack script, Android (LineageOS GSI) and TWRP boot successfully together. |
+
+---
+
+## 📲 Prerequisites & Unlocking
+
+Before flashing anything to your device:
+
+1. **Unlock the Bootloader**: You must unlock your bootloader. Since MediaTek devices can be tricky, it is highly recommended to use [mtkclient](https://github.com/bkerler/mtkclient) to bypass lock restrictions and unlock the bootloader:
+   ```bash
+   python mtk oem unlock
+   ```
+2. **Back up your Partitions**: Do a full partition backup of your device using `mtkclient` or fastboot before writing custom images:
+   ```bash
+   python mtk r vendor_boot_a,vendor_boot_b backup_vendor_boot.bin
+   ```
+   Keep these backups safe in case you need to revert to stock.
 
 ---
 
 ## 🛠️ Build & Compilation
 
-To compile the `vendor_boot` image containing TWRP, follow these steps:
+To compile the base `vendor_boot` image containing TWRP:
 
 ### 1. Set Up the Build Environment
 Initialize your Android build environment (Android 12.1 / TWRP-12 branch):
@@ -50,22 +85,35 @@ The compiled output will be generated at `out/target/product/TB330FU/vendor_boot
 
 ---
 
-## 🔧 Repacking & Flashing (Recovery-Only Mode)
+## 🔧 Repacking & Flashing (Dual-Slot A/B Repack)
 
-Lenovo Tab M11 is a Generic Kernel Image (GKI) device where the recovery ramdisk resides inside the `vendor_boot` partition. To prevent bootloader signature checks and load TWRP successfully with dynamic mounts and working touchscreen, you must repack the compiled TWRP image using the stock base:
+Because the Lenovo Tab M11 is a Generic Kernel Image (GKI) device, the recovery ramdisk resides inside the `vendor_boot` partition. Slot A and Slot B contain different kernel modules and slot-specific fstab mounts required for Android (GSI) to boot successfully. To prevent bootloops and keep both Android and TWRP functioning, you must use the slot-specific repacker:
 
 1. Clone this repository on your computer.
-2. Ensure you have the `magiskboot` binary and the `unpack_bootimg.py` / `mkbootimg.py` utilities in the parent folder.
-3. Run the interactive repacking script:
+2. The repository includes all required repacking helper scripts under the `repack_tools/` directory.
+3. Run the repacking script:
    ```bash
    python3 repack_twrp.py
    ```
-4. Flash the resulting repacked image (`twrp_tb330fu_touch_working.img`) in Fastboot mode:
+   *Note: The script will ask for the path to your compiled TWRP image, and the path to your working patched `vendor_boot_a` and `vendor_boot_b` images.*
+4. The repacker will produce two slot-specific images:
+   - `twrp_tb330fu_dual_a.img`
+   - `twrp_tb330fu_dual_b.img`
+5. Flash them to their respective slots in Fastboot mode:
    ```bash
-   fastboot flash vendor_boot_a twrp_tb330fu_touch_working.img
-   fastboot flash vendor_boot_b twrp_tb330fu_touch_working.img
-   fastboot reboot-recovery
+   fastboot flash vendor_boot_a twrp_tb330fu_dual_a.img
+   fastboot flash vendor_boot_b twrp_tb330fu_dual_b.img
+   fastboot reboot
    ```
+
+---
+
+## 🤝 Acknowledgements & Thanks
+
+- **DiaoLin** (for the base MT8786 device tree)
+- **TeamWin** (for the recovery platform)
+- **AOSP** & the Android developer community
+- The contributors of **mtkclient** and **magiskboot** utilities
 
 ---
 
