@@ -34,13 +34,11 @@ This device tree, dynamic touch screen firmware injection, ConfigFS USB/ADB reso
 | :--- | :--- | :--- |
 | **Boot Recovery** | **Works** | TWRP boots successfully via repacked `vendor_boot`. |
 | **Touchscreen** | **Works** | Novatek SPI Touch Panel driver firmware (`novatek_ts_tcl_fw.bin`) compiled natively. |
-| **Dynamic Partitions** | **Works** | Mapping `/system`, `/vendor`, and `/product` logical partitions from the `super` device mapper is fully functional. |
-| **ADB Shell** | **Works** | Native dynamic ADB compiled-in; shell access works. |
 | **Normal Boot (Android)**| **Works** | Using the dual-slot repack script, Android (LineageOS GSI) and TWRP boot successfully together. |
+| **Dynamic Partitions** | **Partial** | Logical partitions are mapped, but fail to mount (`/system_root`, `/vendor`, etc.) with "Permission denied". |
 | **Decryption / Data** | **Broken** | Fails to mount `/data` with "Invalid argument" (common on FBE v2 / GKI devices). |
-| **MTP** | **Broken** | Media Transfer Protocol is not working due to missing ConfigFS routing. |
-| **ADB Sideload** | **Broken** | Sideload hangs and device is not recognized in sideload mode due to missing ConfigFS routing. |
-| **USB OTG** | **Partial** | Manual mount via shell works, but does not appear in the TWRP Mount menu. |
+| **MTP & USB OTG** | **Broken** | USB routing (ConfigFS) is broken. OTG requires manual shell commands to mount. |
+| **ADB & Sideload** | **Broken** | ADB does not recognize the device; sideload hangs. |
 
 ---
 
