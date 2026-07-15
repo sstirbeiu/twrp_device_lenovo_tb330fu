@@ -36,8 +36,11 @@ This device tree, dynamic touch screen firmware injection, ConfigFS USB/ADB reso
 | **Touchscreen** | **Works** | Novatek SPI Touch Panel driver firmware (`novatek_ts_tcl_fw.bin`) compiled natively. |
 | **Dynamic Partitions** | **Works** | Mapping `/system`, `/vendor`, and `/product` logical partitions from the `super` device mapper is fully functional. |
 | **ADB / minadbd** | **Works** | Native dynamic ADB compiled-in; ConfigFS USB controllers resolved. |
-| **Decryption / Data** | **WIP** | Undergoing filesystem validation. |
 | **Normal Boot (Android)**| **Works** | Using the dual-slot repack script, Android (LineageOS GSI) and TWRP boot successfully together. |
+| **Decryption / Data** | **Broken** | Fails to mount `/data` with "Invalid argument" (common on FBE v2 / GKI devices). |
+| **MTP** | **Untested** | Needs verification. |
+| **USB OTG** | **Partial** | Manual mount via shell works, but does not appear in the TWRP Mount menu. |
+| **ADB Sideload** | **Broken** | Sideload hangs and device is not recognized in sideload mode. |
 
 ---
 
