@@ -18,7 +18,7 @@ This device tree and its associated recovery fixes were developed in a pair-prog
 | **Dynamic Partitions** | **Works** | Mapping `/system`, `/vendor`, and `/product` logical partitions from the `super` device mapper is fully functional. |
 | **ADB / minadbd** | **Works** | Native dynamic ADB compiled-in; ConfigFS USB controllers resolved. |
 | **Decryption / Data** | **WIP** | Undergoing filesystem validation. |
-| **Normal Boot (Android)**| **WIP** | Flashing this recovery image causes normal Android (LineageOS GSI) to bootloop due to GKI concatenation RAM disk size boundaries (8MB legacy fallback limit). Must flash stock `vendor_boot` to boot normal system. |
+| **Normal Boot (Android)**| **Standalone Mode** | Flashing this TWRP image causes normal Android (LineageOS GSI) to bootloop. Because the MediaTek bootloader and kernel decompress the recovery ramdisk during normal boot, it creates init and file structure conflicts. To use both, you must flash the stock/patched `vendor_boot` to boot Android, and this repacked TWRP image to boot TWRP. |
 
 ---
 
@@ -50,20 +50,21 @@ The compiled output will be generated at `out/target/product/TB330FU/vendor_boot
 
 ---
 
-## 🔧 Repacking & Flashing
+## 🔧 Repacking & Flashing (Recovery-Only Mode)
 
-Lenovo Tab M11 is a Generic Kernel Image (GKI) device where the recovery ramdisk resides inside the `vendor_boot` partition. To prevent bootloader signature checks and load TWRP, you must repack the compiled TWRP image on top of a working patched base:
+Lenovo Tab M11 is a Generic Kernel Image (GKI) device where the recovery ramdisk resides inside the `vendor_boot` partition. To prevent bootloader signature checks and load TWRP successfully with dynamic mounts and working touchscreen, you must repack the compiled TWRP image using the stock base:
 
-1. Use the local `repack_ultimate.py` script provided in the workspace.
-2. Run the script on your computer:
+1. Clone this repository on your computer.
+2. Ensure you have the `magiskboot` binary and the `unpack_bootimg.py` / `mkbootimg.py` utilities in the parent folder.
+3. Run the interactive repacking script:
    ```bash
-   python3 repack_ultimate.py
+   python3 repack_twrp.py
    ```
-3. Flash the repacked output (`twrp_final_repacked.img`) in Fastboot mode:
+4. Flash the resulting repacked image (`twrp_tb330fu_touch_working.img`) in Fastboot mode:
    ```bash
-   fastboot flash vendor_boot_a twrp_final_repacked.img
-   fastboot flash vendor_boot_b twrp_final_repacked.img
-   fastboot reboot recovery
+   fastboot flash vendor_boot_a twrp_tb330fu_touch_working.img
+   fastboot flash vendor_boot_b twrp_tb330fu_touch_working.img
+   fastboot reboot-recovery
    ```
 
 ---
