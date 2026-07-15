@@ -28,8 +28,8 @@ PRODUCT_PACKAGES += \
     update_engine \
     update_verifier \
     update_engine_sideload \
-    adbd \
-    minadbd
+    adbd.recovery \
+    minadbd.recovery
 
 # USB ConfigFS properties
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
